@@ -11,6 +11,14 @@ loadFonts().then(() => {
   if(currentSelection && figma.currentPage.selection.length > 1) {
     figma.notify("Please select a single element");
     figma.closePlugin();
+    return null;
+  }
+
+  // Catch if selection is a component set, variant or component
+  if((parent && parent.type === 'COMPONENT_SET') || (currentSelection && currentSelection.type === 'COMPONENT') || (currentSelection && currentSelection.type === 'COMPONENT_SET')) {
+    figma.notify("Components and variants are currently unsupported. Wrap the contents in a frame and run the plugin on that.");
+    figma.closePlugin();
+    return null;
   }
 
   if(currentSelection) {
@@ -25,7 +33,7 @@ loadFonts().then(() => {
 
     // Create inner frame
     let innerFrame = figma.createFrame();
-    innerFrame.name = '---';
+    innerFrame.name = '-';
     innerFrame.fills = [];
     innerFrame.layoutMode = 'HORIZONTAL';
     innerFrame.counterAxisSizingMode = 'AUTO';
@@ -44,7 +52,7 @@ loadFonts().then(() => {
 
     // Create the outer frame
     const outerFrame = figma.createFrame();
-    outerFrame.name = `${currentSelection.name} (Fixed Aspect Ratio)`;
+    outerFrame.name = `${currentSelection.name} (Locked Aspect Ratio)`;
     outerFrame.fills = [];
     outerFrame.layoutMode = 'VERTICAL';
     outerFrame.resize(currentSelection.width,outerFrame.height);
@@ -54,14 +62,16 @@ loadFonts().then(() => {
 
     let finalFrame = rotateFrames(innerFrame, outerFrame, currentSelection);
 
-    finalFrame.appendChild(currentSelection);
+    // Add selection inside parent frame and set size and constraints
+    finalFrame.insertChild(0,currentSelection);
     'layoutPositioning' in currentSelection ? currentSelection.layoutPositioning = 'ABSOLUTE' : null;
     'resize' in currentSelection ? currentSelection.resize(finalFrame.width, finalFrame.height) : null;
     'constraints' in currentSelection ? currentSelection.constraints = { horizontal: 'STRETCH', vertical: 'STRETCH'} : null;
     currentSelection.x = 0;
     currentSelection.y = 0;
-
-    if(parent && parent.children !== null) {
+    
+    // Add final frame to the document
+    if(parent && parent.children !== null && parent.type !== 'PAGE') {
       selectionIndex !== null ? parent.insertChild(selectionIndex, finalFrame) : parent.appendChild(finalFrame);
       finalFrame.layoutAlign = 'STRETCH';
       nodes.push(finalFrame);
@@ -103,14 +113,14 @@ function rotateFrames(innerFrame: FrameNode, outerFrame: FrameNode, currentSelec
 
 function makeNewOuterFrame (currentSelection: SceneNode,currentOuter: FrameNode) {
   const newOuter = figma.createFrame();
-  newOuter.name = `${currentSelection.name} (Fixed Aspect Ratio)`;
+  newOuter.name = `${currentSelection.name} (Locked Aspect Ratio)`;
   newOuter.fills = [];
   newOuter.layoutMode = 'VERTICAL';
   newOuter.resize(currentSelection.width,currentOuter.height);
   newOuter.primaryAxisSizingMode = 'AUTO';
   newOuter.counterAxisSizingMode = 'FIXED';
   newOuter.appendChild(currentOuter);
-  currentOuter.name = '---';
+  currentOuter.name = '-';
   currentOuter.layoutAlign = 'STRETCH';
   
   return newOuter;

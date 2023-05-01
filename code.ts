@@ -61,7 +61,7 @@ loadFonts().then(() => {
     currentSelection.x = 0;
     currentSelection.y = 0;
 
-    if(parent && parent.type === 'FRAME') {
+    if(parent && parent.children !== null) {
       selectionIndex !== null ? parent.insertChild(selectionIndex, finalFrame) : parent.appendChild(finalFrame);
       finalFrame.layoutAlign = 'STRETCH';
       nodes.push(finalFrame);
@@ -97,6 +97,7 @@ function rotateFrames(innerFrame: FrameNode, outerFrame: FrameNode, currentSelec
     }
   }
 
+  currentInner.locked = true;
   return currentOuter;
 }
 

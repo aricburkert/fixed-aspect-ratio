@@ -1,17 +1,59 @@
-<h2>Rectangle Creator</h2>
-<p>Count: <input id="count" value="5"></p>
-<button id="create">Create</button>
-<button id="cancel">Cancel</button>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/thomas-lowry/figma-plugin-ds/dist/figma-plugin-ds.css">
+
+<div class="tabs" id="tabs">
+  <label class="tab">
+    <input type="radio" name="column-amount" class="tab-input" value="2" id="tabs-2" checked>
+    <div class="tab-box" id="current-ratio">2</div>
+  </label>
+  <label class="tab">
+    <input type="radio" name="column-amount" class="tab-input" value="3" id="tabs-3">
+    <div class="tab-box">3</div>
+  </label>
+  <label class="tab">
+    <input type="radio" name="column-amount" class="tab-input" value="4" id="tabs-4">
+    <div class="tab-box">4</div>
+  </label>
+</div>
+
+<style>
+  .tabs {
+    display: flex;
+  }
+
+  .tabs > .tab {
+    flex: 1;
+    display: flex;
+    border-radius: 2px;
+  }
+
+  .tab > .tab-input {
+    width: 0;
+    height: 0;
+    margin: 0;
+    display: none;
+  }
+
+  .tab > .tab-box {
+    padding: .2rem .7rem;
+    width: 100%;
+    text-align: center;
+  }
+
+  .tab > .tab-input:checked + .tab-box {
+    background-color: var(--figma-color-bg-selected);
+    border: 1px solid var(--figma-color-border-selected);
+  }
+</style>
+
 <script>
+  onmessage = (event) => {
+    const currentRatio = document.getElementById('current-ratio');
 
-document.getElementById('create').onclick = () => {
-  const textbox = document.getElementById('count');
-  const count = parseInt(textbox.value, 10);
-  parent.postMessage({ pluginMessage: { type: 'create-rectangles', count } }, '*')
-}
-
-document.getElementById('cancel').onclick = () => {
-  parent.postMessage({ pluginMessage: { type: 'cancel' } }, '*')
-}
-
+    if(!event.data.pluginMessage) {
+      currentRatio.innerHTML = "Select a layer";
+    } else {
+      const { message } = event.data.pluginMessage;
+      currentRatio.innerHTML = message;
+    }
+  }
 </script>

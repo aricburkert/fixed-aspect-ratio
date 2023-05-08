@@ -1,5 +1,5 @@
 {
-  "name": "Fixed Aspect Ratio",
+  "name": "Lock Aspect Ratio",
   "id": "1234709595094737890",
   "api": "1.0.0",
   "main": "code.js",
@@ -8,5 +8,21 @@
   "editorType": [
     "figma"
   ],
-  "ui": "ui.html"
+  "ui": "ui.html",
+  "menu": [
+    {
+      "name": "Lock Aspect Ratio",
+      "command": "lock-current"
+    },
+    {
+      "name": "Update Ratio and Lock",
+      "command": "update-then-lock",
+      "parameters": [
+        {
+          "name": "New Aspect Ratio",
+          "key": "newRatio"
+        }
+      ]
+    }
+  ]
 }

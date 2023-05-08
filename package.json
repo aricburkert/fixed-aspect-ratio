@@ -1,5 +1,5 @@
 {
-  "name": "Fixed-Aspect-Ratio",
+  "name": "Lock-Aspect-Ratio",
   "version": "1.0.0",
   "description": "Your Figma Plugin",
   "main": "code.js",
